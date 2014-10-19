@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui">
+<h:body>
+	<h2>PrimeFaces Coden</h2>
+         <h:form id="form">
+            <p:panel id="panel" header="Name" style="margin-bottom:10px;">
+                <p:messages id="messages" />
+                <h:panelGrid columns="3">
+                    <h:outputLabel for="inputname" value="Name: *" />
+                    <p:inputText id="inputname"
+                        value="#{pprBean.inputname}" required="true" label="Name">
+                        <f:validateLength minimum="2" />
+                    </p:inputText>
+                    <p:message for="inputname" />
+                </h:panelGrid>
+            </p:panel>
+            <p:commandButton value="Submit" update="panel,display" id="ajax"
+ actionListener="#{pprBean.saveName}" styleClass="ui-priority-primary"/>
+            <p:panel id="display" header="Information" style="margin-top:10px;">
+                <h:panelGrid columns="2">
+                    <h:outputText value="Name: " />
+                    <h:outputText value="#{pprBean.inputname}" />
+                </h:panelGrid>
+            </p:panel>
+        </h:form>
+</h:body>
+</html>
+
