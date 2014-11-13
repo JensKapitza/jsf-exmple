@@ -133,23 +133,6 @@
 				<version>9.2.3.v20140905</version>
 				<configuration>
 					<scanIntervalSeconds>0</scanIntervalSeconds>
-					<reload>manual</reload>
-					<scanTargets>
-						<scanTarget>src/main/webapp</scanTarget>
-					</scanTargets>
-					<scanTargetPatterns>
-						<scanTargetPattern>
-							<directory>src</directory>
-							<includes>
-								<include>**/*.xml</include>
-								<include>**/*.properties</include>
-								<include>**/*.xhtml</include>
-							</includes>
-							<excludes>
-								<exclude>**/excludeThisFile.properties</exclude>
-							</excludes>
-						</scanTargetPattern>
-					</scanTargetPatterns>
 					<connectors>
 						<connector implementation="org.mortbay.jetty.nio.SelectChannelConnector">
 							<port>8080</port>

@@ -1,6 +1,6 @@
 package spring.bean;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -9,6 +9,7 @@ import javax.faces.context.FacesContext;
 
 import jpa.bean.Greeting;
 
+import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,11 +26,11 @@ public class NameBean {
 	@Autowired
 	SessionFactory sessionFactory;
 
+	@SuppressWarnings("unchecked")
 	@Transactional
 	public static String list(Session session) {
-		List<Greeting> greets = new ArrayList<>();
-		List<?> items = session.createCriteria(Greeting.class).list();
-		items.forEach((Object o) -> greets.add((Greeting) o));
+		Criteria q = session.createCriteria(Greeting.class);
+		List<Greeting> greets = Collections.checkedList(q.list(), Greeting.class); 
 
 		return greets.stream().map(g -> g.getId() + ": " + g.getContent())
 				.collect(Collectors.joining(", "));

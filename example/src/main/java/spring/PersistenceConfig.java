@@ -1,8 +1,6 @@
 package spring;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 import javax.sql.DataSource;
@@ -10,6 +8,7 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -17,9 +16,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
+import org.springframework.http.MediaType;
 import org.springframework.orm.hibernate4.HibernateTransactionManager;
 import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.accept.ContentNegotiationManager;
+import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
@@ -29,7 +31,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 @Configuration
 @EnableTransactionManagement
 @PropertySource({ "/WEB-INF/jdbc.properties" })
-@ComponentScan({ "spring", "spring.bean" })
+@ComponentScan({ "spring", "spring.bean", "rest" })
 public class PersistenceConfig {
 
 	@Autowired
@@ -39,7 +41,7 @@ public class PersistenceConfig {
 	public LocalSessionFactoryBean sessionFactory() {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource(restDataSource());
-		sessionFactory.setPackagesToScan(new String[] { "jpa" ,"jpa.bean" });
+		sessionFactory.setPackagesToScan(new String[] { "jpa", "jpa.bean" });
 		sessionFactory.setHibernateProperties(hibernateProperties());
 
 		return sessionFactory;
@@ -109,15 +111,22 @@ public class PersistenceConfig {
 	}
 
 	@Bean
-	public ContentNegotiatingViewResolver contentViewResolver() {
+	public ContentNegotiationManagerFactoryBean contentNegotiationManagerFactory() {
+		ContentNegotiationManagerFactoryBean fac = new ContentNegotiationManagerFactoryBean();
+		fac.setDefaultContentType(MediaType.APPLICATION_JSON);
+		fac.addMediaType("json", MediaType.APPLICATION_JSON);
+		fac.addMediaType("xml", MediaType.APPLICATION_XML);
+		return fac;
+	}
 
+	@Autowired
+	@Bean
+	public ContentNegotiatingViewResolver contentViewResolver(
+			@Qualifier("contentNegotiationManagerFactory") ContentNegotiationManager contentNegotiationManager) {
+		System.out.println(" -- das ist ein Test wegen den Typen"
+				+ contentNegotiationManager.getAllFileExtensions());
 		ContentNegotiatingViewResolver res = new ContentNegotiatingViewResolver();
-
-		Map<String, String> map = new HashMap<>();
-		map.put("json", "application/json");
-		map.put("xml", "application/xml");
-
-		res.setMediaTypes(map);
+		res.setContentNegotiationManager(contentNegotiationManager);
 		res.setDefaultViews(Arrays.asList(new MappingJackson2JsonView()));
 		return res;
 
