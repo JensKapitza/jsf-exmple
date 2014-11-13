@@ -1,24 +1,39 @@
 package demo;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.faces.application.FacesMessage;
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.ManagedProperty;
 import javax.faces.context.FacesContext;
 
-import org.apache.commons.dbcp2.BasicDataSource;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-@ManagedBean(name = "pprBean")
+import rest.Greeting;
+
+@Component
+@Scope("view")
+@Transactional
 public class NameBean {
 	private String inputname;
-	@ManagedProperty("#{dataSource}") 
-	private BasicDataSource dataSource;
 
-	public void setDataSource(BasicDataSource dataSource) {
-		this.dataSource = dataSource;
-	}
+	@Autowired
+	SessionFactory sessionFactory;
+	
+	@Transactional
+	public static String list(Session session) {
+		List<Greeting> greets = new ArrayList<>();
+		session.createQuery("SELECT g FROM Greeting g").list()
+				.forEach(o -> greets.add((Greeting) o));
 
-	public BasicDataSource getDataSource() {
-		return dataSource;
+		return greets.stream().map(g -> g.getId() + ": " + g.getContent())
+				.collect(Collectors.joining(", "));
+
 	}
 
 	public String getInputname() {
@@ -28,11 +43,13 @@ public class NameBean {
 	public void setInputname(String inpName) {
 		this.inputname = inpName;
 		System.out.println("NAME: " + inpName);
-		dataSource.setUsername(inputname);
 	}
 
 	public void saveName() {
-		FacesContext.getCurrentInstance().addMessage(null,
-				new FacesMessage("Welcome " + inputname + " !"));
+
+		FacesContext.getCurrentInstance().addMessage(
+				null,
+				new FacesMessage("Welcome " + inputname + " !"
+						+ list(sessionFactory.getCurrentSession())));
 	}
 }

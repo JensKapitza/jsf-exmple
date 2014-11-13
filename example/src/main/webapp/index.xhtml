@@ -14,20 +14,15 @@
                 <h:panelGrid columns="3">
                     <h:outputLabel for="inputname" value="Name: *" />
                     <p:inputText id="inputname"
-                        value="#{pprBean.inputname}" required="true" label="Name">
+                        value="#{nameBean.inputname}" required="true" label="Name">
                         <f:validateLength minimum="2" />
                     </p:inputText>
                     <p:message for="inputname" />
                 </h:panelGrid>
             </p:panel>
-            <p:commandButton value="Submit" update="panel,display" id="ajax"
- actionListener="#{pprBean.saveName}" styleClass="ui-priority-primary"/>
-            <p:panel id="display" header="Information" style="margin-top:10px;">
-                <h:panelGrid columns="2">
-                    <h:outputText value="Name: " />
-                    <h:outputText value="#{pprBean.inputname}" />
-                </h:panelGrid>
-            </p:panel>
+            <p:commandButton value="Submit" update="panel" id="ajax"
+ actionListener="#{nameBean.saveName}" styleClass="ui-priority-primary"/>
+           
         </h:form>
 </h:body>
 </html>
