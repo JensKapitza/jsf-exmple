@@ -1,4 +1,4 @@
-package database;
+package spring;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,7 +29,7 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 @Configuration
 @EnableTransactionManagement
 @PropertySource({ "/WEB-INF/jdbc.properties" })
-@ComponentScan({ "rest", "demo" })
+@ComponentScan({ "spring", "spring.bean" })
 public class PersistenceConfig {
 
 	@Autowired
@@ -39,7 +39,7 @@ public class PersistenceConfig {
 	public LocalSessionFactoryBean sessionFactory() {
 		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
 		sessionFactory.setDataSource(restDataSource());
-		sessionFactory.setPackagesToScan(new String[] { "rest" });
+		sessionFactory.setPackagesToScan(new String[] { "jpa" ,"jpa.bean" });
 		sessionFactory.setHibernateProperties(hibernateProperties());
 
 		return sessionFactory;

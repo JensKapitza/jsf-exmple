@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Collectors;
 
+import jpa.bean.Greeting;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,9 +31,8 @@ public class RestController {
 	@RequestMapping(value = "/list.action", produces = "application/json")
 	public String list() {
 		List<Greeting> greets = new ArrayList<>();
-		getCurrentSession().createQuery("SELECT g FROM Greeting g").list()
-				.forEach(o -> greets.add((Greeting) o));
-
+		List<?> items = getCurrentSession().createCriteria(Greeting.class).list();
+		items.forEach((Object o) -> greets.add((Greeting) o));
 		return greets.stream().map(g -> g.getId() + ": " + g.getContent())
 				.collect(Collectors.joining(", "));
 
@@ -41,7 +42,6 @@ public class RestController {
 	@RequestMapping(value = "/greeting.action", produces = "application/json")
 	public Greeting greeting(
 			@RequestParam(value = "name", defaultValue = "World") String name) {
-		System.out.println("called!!!!!!----" + name);
 		Greeting gr = new Greeting(counter.incrementAndGet(), String.format(
 				template, name));
 		getCurrentSession().save(gr);

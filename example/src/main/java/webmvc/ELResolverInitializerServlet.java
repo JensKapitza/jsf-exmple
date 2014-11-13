@@ -1,4 +1,4 @@
-package database;
+package webmvc;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.ServletConfig;

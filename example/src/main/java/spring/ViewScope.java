@@ -1,4 +1,4 @@
-package database;
+package spring;
 
 import java.util.Map;
 

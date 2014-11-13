@@ -1,4 +1,4 @@
-package rest;
+package jpa.bean;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

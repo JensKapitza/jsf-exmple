@@ -1,4 +1,4 @@
-package database;
+package webmvc;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -7,11 +7,12 @@ import javax.servlet.ServletRegistration.Dynamic;
 import org.springframework.web.context.request.RequestContextListener;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
+import spring.PersistenceConfig;
+
 import com.sun.faces.config.ConfigureListener;
 
 public class MyWebAppInitializer extends
 		AbstractAnnotationConfigDispatcherServletInitializer {
-
 
 	@Override
 	public void onStartup(ServletContext servletContext)
