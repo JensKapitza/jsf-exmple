@@ -60,17 +60,7 @@
 		<property name="initialSize" value="2" />
 		<property name="minIdle" value="2" />
 	</bean>
-	<!-- <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager"> 
-		<property name="dataSource" ref="dataSource"></property> </bean> -->
 
-	<!-- JPA Hibernate shared entity manager <bean id="entityManager" class="org.springframework.orm.jpa.support.SharedEntityManagerBean"> 
-		<property name="entityManagerFactory" ref="emf" /> </bean> -->
-	<!-- error!!! -->
-	<!-- <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager"> 
-		<property name="entityManagerFactory" ref="emf" /> </bean> <jee:jndi-lookup 
-		id="platformTransactionManager" jndi-name="java:appserver/TransactionManager" 
-		resource-ref="false" expected-type="javax.transaction.TransactionManager" 
-		/> -->
 	<bean id="transactionManager"
 		class="org.springframework.transaction.jta.JtaTransactionManager">
 		<constructor-arg ref="platformTransactionManager" />
@@ -87,18 +77,19 @@
 				<value>rest</value>
 			</list>
 		</property>
+		<property name="persistenceProviderClass"
+			value="org.hibernate.jpa.HibernatePersistenceProvider" />
+
 		<property name="jpaVendorAdapter">
-			<bean
-				class="org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
 				<property name="showSql" value="true" />
 			</bean>
 		</property>
 		<property name="jpaProperties">
 			<props>
-				<prop key="eclipselink.ddl-generation">create-tables</prop>
-				<prop key="eclipselink.ddl-generation.output-mode">database</prop>
-				<prop key="eclipselink.logging.level">INFO</prop>
-				<prop key="eclipselink.weaving">false</prop>
+				<prop key="cache.provider_class"> org.hibernate.cache.NoCacheProvider</prop>
+				<prop key="hibernate.hbm2ddl.auto"> create</prop>
+				<prop key="hibernate.show_sql">true</prop>
 			</props>
 		</property>
 	</bean>

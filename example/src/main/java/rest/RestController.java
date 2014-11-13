@@ -15,12 +15,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @org.springframework.web.bind.annotation.RestController()
 @EnableTransactionManagement
+@Transactional
 public class RestController {
 
 	private static final String template = "Hello, %s!";
 	private final AtomicLong counter = new AtomicLong();
 
-	@PersistenceContext()
+	@PersistenceContext
 	private EntityManager entityManager;
 
 	@RequestMapping(value = "/list", produces = "application/json")
@@ -34,14 +35,15 @@ public class RestController {
 
 	}
 
- 	@Transactional()
+	@Transactional
 	@RequestMapping(value = "/greeting", produces = "application/json")
 	public Greeting greeting(
 			@RequestParam(value = "name", defaultValue = "World") String name) {
 		System.out.println("called!!!!!!----" + name);
 		Greeting gr = new Greeting(counter.incrementAndGet(), String.format(
 				template, name));
-		entityManager.merge(gr);
+		entityManager.persist(gr);
+		entityManager.flush();
 		return gr;
 	}
 }

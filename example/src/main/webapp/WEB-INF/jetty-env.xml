@@ -3,6 +3,16 @@
 
 <Configure class="org.eclipse.jetty.webapp.WebAppContext">
 
+
+	<New id="DSTest" class="org.eclipse.jetty.plus.jndi.Resource">
+		<Arg></Arg>
+		<Arg>java/jta</Arg>
+		<Arg>
+			<New class="com.atomikos.icatch.jta.UserTransactionImp" />
+		</Arg>
+	</New>
+
+
 	<New id="tx" class="org.eclipse.jetty.plus.jndi.Transaction">
 		<Arg>
 			<New class="com.atomikos.icatch.jta.UserTransactionImp" />
