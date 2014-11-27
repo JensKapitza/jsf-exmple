@@ -29,25 +29,21 @@
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-impl</artifactId>
 			<version>2.2.8-02</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-api</artifactId>
 			<version>2.2.8-02</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>javax.servlet-api</artifactId>
 			<version>3.1.0</version>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>javax.el</groupId>
 			<artifactId>javax.el-api</artifactId>
 			<version>3.0.0</version>
-			<scope>provided</scope>
 		</dependency>
 
 
@@ -85,6 +81,7 @@
 			<version>2.0.1</version>
 		</dependency>
 		<!-- JTA wird von spring verwendet (spring-tx) -->
+		<!-- 
 		<dependency>
 			<groupId>org.ow2.jotm</groupId>
 			<artifactId>jotm-core</artifactId>
@@ -96,13 +93,16 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		 -->
 		<!-- javax.resource.spi.XATerminator wird gebraucht, wenn man keinen App. 
 			Server benutzt. -->
+			<!-- 
 		<dependency>
 			<groupId>javax.resource</groupId>
 			<artifactId>connector-api</artifactId>
 			<version>1.5</version>
 		</dependency>
+			 -->
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-tx</artifactId>

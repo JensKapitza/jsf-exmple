@@ -3,10 +3,10 @@ package spring;
 import java.util.Arrays;
 import java.util.Properties;
 
+import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
-import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
@@ -14,11 +14,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.http.MediaType;
-import org.springframework.orm.hibernate4.HibernateTransactionManager;
-import org.springframework.orm.hibernate4.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaDialect;
+import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor;
+import org.springframework.orm.jpa.vendor.Database;
+import org.springframework.orm.jpa.vendor.HibernateJpaDialect;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.accept.ContentNegotiationManager;
 import org.springframework.web.accept.ContentNegotiationManagerFactoryBean;
@@ -34,17 +41,37 @@ import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 @ComponentScan({ "spring", "spring.bean", "rest" })
 public class PersistenceConfig {
 
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
+	}
+
+	@Bean
 	@Autowired
-	private Environment env;
+	public JpaVendorAdapter jpaVendorAdapter(Environment env) {
+		HibernateJpaVendorAdapter adapter = new HibernateJpaVendorAdapter();
+		adapter.setDatabase(Database.valueOf(env.getProperty("jpa.database")));
+		adapter.setShowSql(true);
+		adapter.setGenerateDdl(true); // should be false!
+		adapter.setDatabasePlatform(env.getProperty("hibernate.dialect"));
+		return adapter;
+	}
 
 	@Bean()
-	public LocalSessionFactoryBean sessionFactory() {
-		LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
-		sessionFactory.setDataSource(restDataSource());
-		sessionFactory.setPackagesToScan(new String[] { "jpa", "jpa.bean" });
-		sessionFactory.setHibernateProperties(hibernateProperties());
+	@Autowired
+	public LocalContainerEntityManagerFactoryBean emf(DataSource dataSource, JpaVendorAdapter adapter, @Qualifier("hibernateProperties") Properties hibernateProperties) {
+		LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+		emf.setPersistenceUnitName("jpapu");
+		emf.setDataSource(dataSource);
+		emf.setJpaVendorAdapter(adapter);
+		emf.setPackagesToScan(new String[] { "jpa", "jpa.bean" });
+		emf.setJpaProperties(hibernateProperties);
+		return emf;
+	}
 
-		return sessionFactory;
+	@Bean
+	public JpaDialect jpaDialect() {
+		return new HibernateJpaDialect();
 	}
 
 	@Bean
@@ -57,7 +84,8 @@ public class PersistenceConfig {
 	}
 
 	@Bean
-	public DataSource restDataSource() {
+	@Autowired
+	public DataSource restDataSource(Environment env) {
 		BasicDataSource dataSource = new BasicDataSource();
 		dataSource.setDriverClassName(env.getProperty("jdbc.driverClassName"));
 		dataSource.setUrl(env.getProperty("jdbc.url"));
@@ -69,12 +97,18 @@ public class PersistenceConfig {
 
 	@Bean
 	@Autowired
-	public HibernateTransactionManager transactionManager(
-			SessionFactory sessionFactory) {
-		HibernateTransactionManager txManager = new HibernateTransactionManager();
-		txManager.setSessionFactory(sessionFactory);
+	public JpaTransactionManager transactionManager(EntityManagerFactory emf,
+			JpaDialect dialect) {
 
+		JpaTransactionManager txManager = new JpaTransactionManager();
+		txManager.setEntityManagerFactory(emf);
+		txManager.setJpaDialect(dialect);
 		return txManager;
+	}
+
+	@Bean
+	public PersistenceAnnotationBeanPostProcessor persistenceAnnotationBeanPostProcessor() {
+		return new PersistenceAnnotationBeanPostProcessor();
 	}
 
 	@Bean
@@ -82,7 +116,9 @@ public class PersistenceConfig {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
 
-	Properties hibernateProperties() {
+	@Bean()
+	@Autowired
+	public Properties hibernateProperties(Environment env) {
 		return new Properties() {
 			private static final long serialVersionUID = -1552867857638585834L;
 

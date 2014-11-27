@@ -17,6 +17,7 @@ public class MyWebAppInitializer extends
 	@Override
 	public void onStartup(ServletContext servletContext)
 			throws ServletException {
+		super.onStartup(servletContext);
 		Dynamic faces = servletContext.addServlet("Faces Servlet",
 				"javax.faces.webapp.FacesServlet");
 		faces.addMapping("*.xhtml");
@@ -26,7 +27,6 @@ public class MyWebAppInitializer extends
 		Dynamic elResolverInitializer = servletContext.addServlet(
 				"elResolverInit", new ELResolverInitializerServlet());
 		elResolverInitializer.setLoadOnStartup(2);
-		super.onStartup(servletContext);
 	}
 
 	@Override
