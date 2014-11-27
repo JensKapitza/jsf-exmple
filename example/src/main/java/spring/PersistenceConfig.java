@@ -8,6 +8,7 @@ import javax.sql.DataSource;
 
 import org.apache.commons.dbcp2.BasicDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -59,7 +60,9 @@ public class PersistenceConfig {
 
 	@Bean()
 	@Autowired
-	public LocalContainerEntityManagerFactoryBean emf(DataSource dataSource, JpaVendorAdapter adapter, @Qualifier("hibernateProperties") Properties hibernateProperties) {
+	public LocalContainerEntityManagerFactoryBean emf(DataSource dataSource,
+			JpaVendorAdapter adapter,
+			@Qualifier("hibernateProperties") Properties hibernateProperties) {
 		LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
 		emf.setPersistenceUnitName("jpapu");
 		emf.setDataSource(dataSource);
@@ -107,12 +110,17 @@ public class PersistenceConfig {
 	}
 
 	@Bean
-	public PersistenceAnnotationBeanPostProcessor persistenceAnnotationBeanPostProcessor() {
+	public static AutowiredAnnotationBeanPostProcessor autowiredAnnotationBeanPostProcessor() {
+		return new AutowiredAnnotationBeanPostProcessor();
+	}
+
+	@Bean
+	public static PersistenceAnnotationBeanPostProcessor persistenceAnnotationBeanPostProcessor() {
 		return new PersistenceAnnotationBeanPostProcessor();
 	}
 
 	@Bean
-	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
+	public static PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
 
@@ -159,8 +167,6 @@ public class PersistenceConfig {
 	@Bean
 	public ContentNegotiatingViewResolver contentViewResolver(
 			@Qualifier("contentNegotiationManagerFactory") ContentNegotiationManager contentNegotiationManager) {
-		System.out.println(" -- das ist ein Test wegen den Typen"
-				+ contentNegotiationManager.getAllFileExtensions());
 		ContentNegotiatingViewResolver res = new ContentNegotiatingViewResolver();
 		res.setContentNegotiationManager(contentNegotiationManager);
 		res.setDefaultViews(Arrays.asList(new MappingJackson2JsonView()));
