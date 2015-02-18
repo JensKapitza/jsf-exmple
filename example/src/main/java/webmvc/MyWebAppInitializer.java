@@ -41,7 +41,7 @@ public class MyWebAppInitializer extends
 
 	@Override
 	protected String[] getServletMappings() {
-		return new String[] { "/", "/rest/*", "*.action" };
+		return new String[] { "/rest/*", "*.action" };
 	}
 
 }
