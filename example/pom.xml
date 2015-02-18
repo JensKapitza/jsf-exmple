@@ -25,6 +25,14 @@
 			<version>4.11</version>
 			<scope>test</scope>
 		</dependency>
+
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-web-api</artifactId>
+			<version>7.0</version>
+		</dependency> 
+		<!--
+
 		<dependency>
 			<groupId>com.sun.faces</groupId>
 			<artifactId>jsf-impl</artifactId>
@@ -45,7 +53,7 @@
 			<artifactId>javax.el-api</artifactId>
 			<version>3.0.0</version>
 		</dependency>
-
+-->
 
 		<!-- SPRING REST haengt von spring-context ab. -->
 		<dependency>
@@ -55,6 +63,7 @@
 		</dependency>
 
 		<!-- JSON -->
+		<!--
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
@@ -71,7 +80,7 @@
 			<artifactId>jackson-databind</artifactId>
 			<version>${jackson.version}</version>
 		</dependency>
-
+-->
 
 
 		<!-- JPA -->

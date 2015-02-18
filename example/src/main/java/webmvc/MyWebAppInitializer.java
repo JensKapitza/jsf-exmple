@@ -9,7 +9,7 @@ import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatche
 
 import spring.PersistenceConfig;
 
-import com.sun.faces.config.ConfigureListener;
+//import com.sun.faces.config.ConfigureListener;
 
 public class MyWebAppInitializer extends
 		AbstractAnnotationConfigDispatcherServletInitializer {
@@ -20,9 +20,9 @@ public class MyWebAppInitializer extends
 		super.onStartup(servletContext);
 		Dynamic faces = servletContext.addServlet("Faces Servlet",
 				"javax.faces.webapp.FacesServlet");
-		faces.addMapping("*.xhtml");
-		ConfigureListener listener = new ConfigureListener();
-		servletContext.addListener(listener);
+		faces.addMapping("*.html");
+		//ConfigureListener listener = new ConfigureListener();
+		//servletContext.addListener(listener);
 		servletContext.addListener(new RequestContextListener());
 		Dynamic elResolverInitializer = servletContext.addServlet(
 				"elResolverInit", new ELResolverInitializerServlet());
